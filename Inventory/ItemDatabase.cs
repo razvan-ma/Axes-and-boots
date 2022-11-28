@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class ItemDatabase : MonoBehaviour
 {
-    public Slot lootSlot;
-    public Sprite sprite;
     private void Awake()
     {
         BuildDatabase();
@@ -23,17 +21,19 @@ public class ItemDatabase : MonoBehaviour
     void BuildDatabase()
     {
         items = new List<Item> {
-                new Item(0, "Equipment",Resources.Load("Assets/Resources/Iron Sword") as Sprite, "Iron Sword",
+                new Item(0, "Weapon",Resources.Load<Sprite>("Iron Sword"), "Iron Sword",
                 new Dictionary<string, int>
                 {
                     {"Attack",5}
+                }),
+                new Item(1, "Armor",Resources.Load<Sprite>("dragon"), "Platemail",
+                new Dictionary<string, int>
+                {
+                    {"Armor", 10}
                 })
             };
     }
     void Start()
     {
-        lootSlot.item = GetItem(0);
-        lootSlot.gameObject.transform.GetComponentInChildren<Image>().sprite = sprite;
-        Debug.Log(lootSlot.item.itemName);
     }
 }

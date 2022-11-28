@@ -4,18 +4,38 @@ using UnityEngine;
 
 public class ItemsWindow : MonoBehaviour
 {
-    int slotsNr;
-    List<Slot> slots = new List<Slot>();
-    void Start()
-    {
-        slotsNr = gameObject.transform.childCount;
+    public int space;
+    public int size;
+
+    void Start(){
+        size = gameObject.transform.childCount;
+        space = size;
     }
-    // Update is called once per frame
-    void Update()
-    {
-        foreach (Slot slot in slots)
-        {
-            //slots = gameObject.GetComponentInChildren<Slot>();
-        }    
+    public GameObject GetSlot(int index){
+        Transform childTrans;
+        if(index == 0)
+            childTrans =  gameObject.transform.Find("Slot");
+        else
+            childTrans =  gameObject.transform.Find("Slot (" + index.ToString() + ")");
+        if (childTrans != null)
+            return childTrans.gameObject;
+        else
+            return null;
+    }
+    public void AddItem(Item item){
+        if(space == 0)
+            {
+                Debug.Log("INVENTORY IS FULL");
+                return;
+            }
+        Slot slot = GetSlot(size - space).gameObject.GetComponent<Slot>();
+        space--;
+        Debug.Log(item.itemName);
+        slot.item = item;
+        slot.empty = false;
+    }
+    public void MoveItem(ItemsWindow dest){
+        AddItem(GetSlot(size - space).GetComponent<Item>());
+
     }
 }

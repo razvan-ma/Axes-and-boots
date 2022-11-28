@@ -6,60 +6,58 @@ using UnityEngine.UI;
 public class Slot : MonoBehaviour
 {
     public Item item;
-
-    public GameObject backpack;
-    public GameObject loot;
-    public GameObject equipment;
     public bool empty = true;
-    public Sprite buttonImage;
-    void Update()
-    {           
-    }
+    public Transform imageObj;
+    public Image image;
     void Start()
     {
-        //icon = item.icon;
-        //buttonImage.sprite = null;
-        buttonImage = Resources.Load("Assets/") as Sprite;
-    }
-
-    public void OnClickPressed()//sincer nu stiu altfel
-    {
-
-        if (item != null)
-        {
-            if(gameObject.GetComponentInParent<LootTable>()) 
-            {
-                MoveItem(this, backpack.GetComponentInChildren<Slot>());
-            }
-            if (gameObject.GetComponentInParent<StatsManager>())
-            {
-                MoveItem(this, backpack.GetComponentInChildren<Slot>());
-            }
-            if (gameObject.transform.parent.name == "Backpack")
-            {
-                MoveItem(this, equipment.GetComponentInChildren<Slot>());
-            }
-        }
-
+        imageObj = gameObject.transform.GetChild(0);
+        image = imageObj.GetComponent<Image>();
 
     }
-    void MoveItem(Slot currentSlot,Slot moveSlot)
+    void Update()
     {
-        
-        if (moveSlot.empty)
+        if(item != null && !empty)
         {
-            Debug.Log(currentSlot.item.icon);
-            moveSlot.transform.GetChild(0).GetComponent<Image>().sprite = currentSlot.item.icon;
-            currentSlot.empty = true;
-            moveSlot.empty = false;
-            moveSlot.item = currentSlot.item;
-            currentSlot.item = null;
-            moveSlot.transform.GetChild(0).GetComponent<Image>().enabled = true;
+            if(!image.isActiveAndEnabled)
+                {image.enabled = true;
+            image.sprite = item.icon;}
+        }
+    }
+    public void OnClickPressed(){
+        if(!empty)
+            MoveItem();
+    }
+    public void RemoveItem(){
+        item = null;
+        empty = true;
+        image.sprite = Resources.Load<Sprite>("Mini_background");
+        ItemsWindow src = gameObject.transform.parent.GetComponent<ItemsWindow>();
+        src.space++;
+    }
+    public void MoveItem(){
+        ItemsWindow dest = null;
+        if(gameObject.transform.parent.name.Equals("Backpack"))
+            {
+                dest = GameObject.Find("Equipment").GetComponent<ItemsWindow>();
+            }
+        if(gameObject.transform.parent.name.Equals("Equipment"))
+            {
+                dest = GameObject.Find("Backpack").GetComponent<ItemsWindow>();
+            }
+        if(gameObject.transform.parent.name.Equals("Loot"))
+            {
+                dest = GameObject.Find("Backpack").GetComponent<ItemsWindow>();
+            }
+        if(dest != null)
+        {
             
-            currentSlot.GetComponent<Image>().sprite = buttonImage;
-            //currentSlot.transform.GetChild(0).GetComponent<Image>().sprite = buttonImage;
-            currentSlot.transform.GetChild(0).GetComponent<Image>().enabled = false;
+            if(dest.space == 0)
+                return;
+            Debug.Log(item);
+            dest.AddItem(item);
+            RemoveItem();
             
         }
-}
+    }
 }
